@@ -25,7 +25,7 @@ The design approach for this set of task requirements is one of a star schema wi
 - **TaskOccurrence**: a scheduled instance of a Task on a particular date
 
 ## Design Logic
-![Task ERD](DataModeling/TaskERD.png)
+![Task ERD](TaskERD.png)
 **Task and Person Tables**
 Created as dimension tables based on the following:
 - Static data
