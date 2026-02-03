@@ -59,7 +59,7 @@ for _ in range(NUM_ENCOUNTERS):
         VALUES (%s, %s, %s, %s, %s, %s, NOW())
     """, (encounter_id, random.choice(patients), random.choice(practitioners),
           random.choice(["planned", "in-progress", "finished", "cancelled"]),
-          fake.date_time_between(start_date="-30d", end_date="now"), fake.sentence()))
+          fake.date_time_between(start_date="-300d", end_date="now"), fake.sentence()))
 
 # Insert Observations
 for _ in range(NUM_OBSERVATIONS):

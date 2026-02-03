@@ -79,23 +79,18 @@ Writing Queries
 Lets create a data model for a set of requirements!
 
 Create a model that allows people to track Tasks over time.
-
 People can be assigned to do a Task.
-
 A task can reoccur at a cadence of daily, weekly, monthly.
-
 Each occurrence of a task can have statuses: Not Started, In Progress, Completed (but not the Task itself)
 
 #### Example
-
 Here's our team of people:
 
 - Ricardo
 - Shanaya
 - Daniel
 
-Say we have 3 tasks.
-
+Say we have 3 tasks:
 Task 1 repeats monthly and ends after 12 occurrences.
 Task 2 only occurs once.
 Task 3 occurs daily, and ends after 30 occurences.
