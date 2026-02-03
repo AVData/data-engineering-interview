@@ -3,20 +3,20 @@
 # Conceptual Data Model
 
 ## Business Glossary for Tasks Prompt
-- There are a set of 3 taks that all have to be assigned to people, and have to be executed given the constraints (Task 1: repeats monthly and ends after 12 occurrences, Task 2: occurs once, Task 3: occurs daily and ends after 30 occurrences)
+- There are a set of 3 tasks that all have to be assigned to people, and have to be executed given the constraints (Task 1: repeats monthly and ends after 12 occurrences, Task 2: occurs once, Task 3: occurs daily and ends after 30 occurrences)
 - Multiple people can be assigned to each task, but the task can only be executed (occur/reoccur) given the constraints
 - Assumption example: 
     - Task 3, which repeats daily can be done by any of the three people, but more than one person cannot perform 
-    Task 3 on the same day as another, and the task reoccurrence ends after it's set number of reoccurrence constraints are met with a `Completed` `Status` for the respective task reoccurrence count.
+    Task 3 on the same day as another, and the task recurrence ends after it's set number of recurrence constraints are met with a `Completed` `Status` for the respective task recurrence count.
 - Contextualized Problem Statement:
     - A grocery store has an established set of tasks that need to be performed on a specific cadence.
         - In January there needs to be a daily count of the number of sales of a given set of items to see how they compare to the average of the past year of those same set of items.
-        - Once at the beginning of the year a staff memeber is responsible for the task of selecting the following year's list/set of items that will be tracked and compared the following January.
-        - Once every month any staff memember will be responble for reporting on the number of sales for those selected items over that month.
-    - The responsiblities of these tasks are selected at random by management and assigned at the end of the year.
+        - Once at the beginning of the year a staff member is responsible for the task of selecting the following year's list/set of items that will be tracked and compared the following January.
+        - Once every month any staff member will be responsible for reporting on the number of sales for those selected items over that month.
+    - The responsibilities of these tasks are selected at random by management and assigned at the end of the year.
 
 ## Design Summary
-The design approach for this set of task requirements is one of a star schema with fact and dimensional tables. Dimension tables originate from the fact table `task_assignment`, where tasks are assigned to persons over a specific timeframe, progression is logged in the `task_occurence` table. The dimensional tables are `person` for each person in the fact table, and `task` for each task.
+The design approach for this set of task requirements is one of a star schema with fact and dimensional tables. Dimension tables originate from the fact table `task_assignment`, where tasks are assigned to persons over a specific timeframe, progression is logged in the `task_occurrence` table. The dimensional tables are `person` for each person in the fact table, and `task` for each task.
 
 **Tables**
 - **Person**: a staff member who can be assigned tasks
@@ -31,7 +31,7 @@ The design approach for this set of task requirements is one of a star schema wi
 Created as dimension tables based on the following:
 - Static data
 - Derived from fact tables
-- Slow changing dimensions: tasks, requirements, persons, reccurrence_count from prompt
+- Slow changing dimensions: tasks, requirements, persons, recurrence_count from prompt
 
 **Task Assignment and Task Occurrence**
 Facts and event based table logic given the following:
@@ -42,10 +42,10 @@ Facts and event based table logic given the following:
 
 **Catch Alls**
 - Fact tables were designed with strict data constraints in place to improve data integrity and schema evolution
-    - Task_occurrence: unique task_id, and occurence_date constraints to ensure tasks occurrences do not overlap
-    - Task_assignment: unqiue task_id, person_id, and assigned_from, assigned_to constraints to ensure persons are not assigned to the same task on the same days
+    - Task_occurrence: unique task_id, and occurrence_date constraints to ensure tasks occurrences do not overlap
+    - Task_assignment: unique task_id, person_id, and assigned_from, assigned_to constraints to ensure persons are not assigned to the same task on the same days
     - Type casting was created to ensure ingested `status` and occurrence types meet the requirements criteria
-    - Trigger function created to generate a timestamp (`complete_at`) for any task with an updated `Completed` `Status` in the `task_occurrence` table
+    - Created a trigger function to generate a timestamp (`complete_at`) for any task with an updated `Completed` `Status` in the `task_occurrence` table
 
 **Indexing Optimization**
 Indexing for common query patterns
@@ -82,7 +82,7 @@ Indexing for common query patterns
 - Task Occurrence
     - id: (PK) INT
     - task_id: (FK) INT
-    - occurence_date: DATE, NOT NULL
+    - occurrence_date: DATE, NOT NULL
     - status: task_status (Not Started, In Progress, Completed), NOT NULL
     - assigned_person_id: (FK) INT
     - complete_at: TIMESTAMP
@@ -142,22 +142,22 @@ ORDER BY o.occurrence_date;
 **Pros**
 - Status Tracking: each occurrence has it's own status, progress can be tracked independently
 - Flexible assignment logic: supports both task-level assignment and per-occurrence overrides, via `task_assignment` and `assigned_person_id` respectively
-- Separation of concerns: task definition (rules, and cadance) is cleanly separated from scheduled instances
-- Referention integrity: CASCADE deletes ensure orphaned data doesn't accumulate
+- Separation of concerns: task definition (rules, and cadence) is cleanly separated from scheduled instances
+- Referential integrity: CASCADE deletes ensure orphaned data doesn't accumulate
 - Indexes on common patterns: covering indexes on `occurrence_date`, `status`, `task_id` speed up typical queries
 
 **Cons**
 - Storage overhead: pre-materialized occurrences require upfront storage, recurring tasks over years explode in size for tasks with high frequency
-- Manual maintenance burden: occurrences must be explicitly generated and managed; no automatic regenration if reccurrence rules change
-- Limited horizon: finite `reccurrence_count` is unrealistic and long term would become unwieldy
-- No audit trail: Only `completed_at` is tracked; no history of status transitions or re-assignments
+- Manual maintenance burden: occurrences must be explicitly generated and managed; no automatic regeneration if recurrence rules change
+- Limited horizon: finite `recurrence_count` is unrealistic and long term would become unwieldy
+- No audit trail: Only `completed_at` is tracked; no history of status transitions or reassignments
 - No Timezone awareness for some date columns
 
 
 ## Future Work
 **Advanced Dependency and Logic**
-- Complex Reccurrence support: The business could request for specific (non-standard) days of the week/month/year to have task executed; we would then implement recurrence rule in addition to the reccurrence count
-- Dependency Mapping: Business could request for certain tasks to be executed before others; implementing a parent-child task-dependency table for task dependency constaints
+- Complex Recurrence support: The business could request for specific (non-standard) days of the week/month/year to have task executed; we would then implement recurrence rule in addition to the recurrence count
+- Dependency Mapping: Business could request for certain tasks to be executed before others; implementing a parent-child task-dependency table for task dependency constraints
 
 **Data Quality and Observability**
 - Implementing constraints to the task_occurrence table that ensure task completion is not performed before the occurrence dates
