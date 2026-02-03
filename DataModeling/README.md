@@ -1,8 +1,8 @@
 # Date Modeling Assignment
 
-# Concetptual Data Model
+# Conceptual Data Model
 
-## Business Glossery for Tasks Prompt
+## Business Glossary for Tasks Prompt
 - There are a set of 3 taks that all have to be assigned to people, and have to be executed given the constraints (Task 1: repeats monthly and ends after 12 occurrences, Task 2: occurs once, Task 3: occurs daily and ends after 30 occurrences)
 - Multiple people can be assigned to each task, but the task can only be executed (occur/reoccur) given the constraints
 - Assumption example: 
