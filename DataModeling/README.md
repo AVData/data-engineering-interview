@@ -26,6 +26,7 @@ The design approach for this set of task requirements is one of a star schema wi
 
 ## Design Logic
 ![Task ERD](TaskERD.png)
+
 **Task and Person Tables**
 Created as dimension tables based on the following:
 - Static data
@@ -144,6 +145,7 @@ ORDER BY o.occurrence_date;
 - Separation of concerns: task definition (rules, and cadance) is cleanly separated from scheduled instances
 - Referention integrity: CASCADE deletes ensure orphaned data doesn't accumulate
 - Indexes on common patterns: covering indexes on `occurrence_date`, `status`, `task_id` speed up typical queries
+
 **Cons**
 - Storage overhead: pre-materialized occurrences require upfront storage, recurring tasks over years explode in size for tasks with high frequency
 - Manual maintenance burden: occurrences must be explicitly generated and managed; no automatic regenration if reccurrence rules change
@@ -156,9 +158,11 @@ ORDER BY o.occurrence_date;
 **Advanced Dependency and Logic**
 - Complex Reccurrence support: The business could request for specific (non-standard) days of the week/month/year to have task executed; we would then implement recurrence rule in addition to the reccurrence count
 - Dependency Mapping: Business could request for certain tasks to be executed before others; implementing a parent-child task-dependency table for task dependency constaints
+
 **Data Quality and Observability**
 - Implementing constraints to the task_occurrence table that ensure task completion is not performed before the occurrence dates
 - Audit logging for the task occurrence table can be established by creating a occurrence_history table that logs status transitions; the same can be applied to the task_assignment table to track changing assigned tasks between persons
+
 **Nice-to-Haves**
 - Creating notification integrations for Slack or email to provide notifications for tasks completed, and tasks not complete past occurrence dates
 
