@@ -231,7 +231,7 @@ select
 	max(date(encounter_date)) as max_date
 from public."Encounter"
 group by patient_id
-having age(max(date(encounter_date)), min(date(encounter_date))) > interval '24 days'
+having age(max(date(encounter_date)), min(date(encounter_date))) > interval '6 months'
 ) d
 group by 1;
 
@@ -250,6 +250,6 @@ FROM first_encounter f
 JOIN public."Encounter" e
   ON e.patient_id = f.patient_id
  AND e.encounter_date > f.first_date
- AND e.encounter_date <= f.first_date + INTERVAL '4 days'
+ AND e.encounter_date <= f.first_date + INTERVAL '6 months'
 GROUP BY 1
 ORDER BY 1;
